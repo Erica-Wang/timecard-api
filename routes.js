@@ -173,7 +173,7 @@ routes.route('/managerGetTasks').get((req,res)=>{
 	
 });
 
-routes.route('/assignTask').post((req,res)=>{
+routes.route('/assignTask').get((req,res)=>{
 	console.log(req['query']);
 	var notes = req['query']['notes'];
 	var manager = req['query']['managerID'];
