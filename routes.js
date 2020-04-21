@@ -5,7 +5,7 @@ const fs = require('fs');
 const ObjectId = require('mongodb').ObjectId; 
 
 const mongo = "mongodb+srv://erica:htc2020@cluster0-8pkut.mongodb.net/test?retryWrites=true&w=majority";
-
+console.log(mongo);
 const app = express();
 const routes = express.Router();
 
