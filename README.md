@@ -59,12 +59,6 @@ output:
 
 1. [{see json file}]
 
-### post /validateTimecard
-
-input:
-
-1. id: timecard ID
-
 ### post /completeTask
 
 input:
@@ -77,6 +71,17 @@ input:
 6. overtime
 7. timeCode
 
+### post /validateTimecard
 
+input:
 
- 
+1. id: timecard ID
+
+### get /getPersonInfo
+
+input:
+
+1. id: a person's ID (can be manager or employee)
+
+output:
+1. {role(either manager/employee), other fields in the employee/manager mongo object}

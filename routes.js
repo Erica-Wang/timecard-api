@@ -250,5 +250,9 @@ routes.route('/getPersonInfo').get((req,res)=>{
 	});
 });
 
+routes.route('/getTimecards').get((req,res)=>{
+	
+});
+
 module.exports = routes;
 
