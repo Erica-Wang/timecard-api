@@ -4,8 +4,6 @@ const crypto = require('crypto');
 const fs = require('fs');
 const ObjectId = require('mongodb').ObjectId; 
 
-const mongo = "mongodb+srv://erica:htc2020@cluster0-8pkut.mongodb.net/test?retryWrites=true&w=majority";
-console.log(mongo);
 const app = express();
 const routes = express.Router();
 
@@ -20,7 +18,7 @@ routes.route('/workerLogIn').get((req,res)=>{
 	var pass = req.body.password;
 	const hash = crypto.createHash('sha256').update(pass).digest('base64');
 	var auth = "false";
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
 	  dbo.collection("workerAccounts").find({}).toArray(function(err, result) {
@@ -45,7 +43,7 @@ routes.route('/managerLogIn').get((req,res)=>{
 	var pass = req.body.password;
 	const hash = crypto.createHash('sha256').update(pass).digest('base64');
 	var auth = "false";
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
 	  dbo.collection("managerAccounts").find({}).toArray(function(err, result) {
@@ -67,7 +65,7 @@ routes.route('/managerLogIn').get((req,res)=>{
 })
 
 routes.route('/managerGetTasks').get((req,res)=>{
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
 	  dbo.collection("tasks").find({}).toArray(function(err, result) {
@@ -90,7 +88,7 @@ routes.route('/assignTask').post((req,res)=>{
 	var taskID = new ObjectId(req.body.id);
 	console.log(notes);
 
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
 		var myquery = {_id:taskID};
@@ -106,7 +104,7 @@ routes.route('/assignTask').post((req,res)=>{
 
 routes.route('/employeeGetTasks').get((req,res)=>{
 	var worker = req.body.workerID;
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
 	  var query = {workerAssigned: worker};
@@ -145,7 +143,7 @@ routes.route('/completeTask').post((req,res)=>{
 	var overtime = req.body.overtime;
 	var timeCode = req.body.timeCode;
 
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
 	  var query = { id: worker, date: date};
@@ -203,7 +201,7 @@ function insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs
 
 routes.route('/validateTimecard').post((req,res)=>{
 	timecard = new ObjectId(req.body.id);
-	MongoClient.connect(mongo, function(err, db) {
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
 		var myquery = {_id:timecard};
@@ -215,6 +213,39 @@ routes.route('/validateTimecard').post((req,res)=>{
 		});
 	});
 	res.json();
+});
+
+routes.route('/getPersonInfo').get((req,res)=>{
+	id = req.body.id;
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		dbo.collection("workerAccounts").find({ID:id}).toArray(function(err, result) {
+		    if (err){ 
+		    	res.json({"status":"fail"});
+		    	throw err;
+		    	return;
+		    }
+		    if(result.length>0){
+		    	result[0]['role']="employee";
+		    	console.log(result);
+		    	db.close();
+		    	return res.json(result[0]);
+		    }
+		});
+		dbo.collection("managerAccounts").find({ID:id}).toArray(function(err, result) {
+		    if (err){ 
+		    	res.json({"status":"fail"});
+		    	throw err;
+		    	return;
+		    }
+		    if(result.length>0){
+		    	result[0]['role']="manager";
+		    	db.close();
+		    	return res.json(result[0]);
+		    }
+		});
+	});
 });
 
 module.exports = routes;
