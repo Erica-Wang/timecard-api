@@ -1,5 +1,16 @@
 ## doc on all the endpoints 
 
+#### acceptable premiums
+1. "SHIFT PREMIUM"
+2. "DAILY STAND BY"
+3. "APPOINTED CREW LEADER"
+4. "RESPONSIBILITY"
+5. "WELDER",
+6. "UNPAID TIME",
+7. "1.5"
+8. "2"
+9. "MEAL ALLOWANCE"
+
 ### get /workerRegister
 
 input:
@@ -95,6 +106,8 @@ input:
 5. hrs
 6. overtime
 7. timeCode
+8: premiums: give a json file, key = premium name, value = empty for "MEAL ALLOWENCE"/"1.5"/"2", # of hrs for rest (SEE FULL LIST IN FRONT OF FILE)
+
 
 ### post /validateTimecard
 

@@ -240,14 +240,14 @@ routes.route('/completeTask').post((req,res)=>{
 	    }else{
 	    	//exists, just insert entry
 	    	entries = result[0]['entries'];
-	    	insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode);
+	    	insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums);
 	    	db.close();
 	    }
 	  });
 	});
 });
 
-function insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode){
+function insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums){
 	var dbo = db.db("test");
 	var query = {id: worker, date: date};
 	console.log(query);
@@ -260,7 +260,8 @@ function insertEntry(worker, date, db, entries, jobCode, activityCode, rate, hrs
     	rate: rate,
     	hrs: hrs,
     	overtime: overtime,
-    	timeCode: timeCode
+    	timeCode: timeCode,
+    	premiums: premiums
     });
     console.log(entries);
 	var newvalues = { $set: {entries: entries } };
