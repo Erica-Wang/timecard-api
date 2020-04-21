@@ -70,10 +70,10 @@ routes.route('/workerRegister').get((req,res)=>{
 	  		department: department,  
 	  		schedule:[] 
 	  	};
-	  	dbo.collection("workerAccounts").insertOne(myobj, function(err, res) {
+	  	dbo.collection("workerAccounts").insertOne(myobj, function(err, r) {
 	  		if (err) throw err;
 	  		console.log("1 document inserted");
-	  		return res.json({auth:"true"});
+	  		res.json({auth:"true"});
   		});
 	});
 })
@@ -94,7 +94,7 @@ routes.route('/managerRegister').get((req,res)=>{
 	  		ID: id, 
 	  		password: hash
 	  	};
-	  	dbo.collection("managerAccounts").insertOne(myobj, function(err, res) {
+	  	dbo.collection("managerAccounts").insertOne(myobj, function(err, r) {
 	  		if (err) throw err;
 	  		console.log("1 document inserted");
 	  		return res.json({auth:"true"});
