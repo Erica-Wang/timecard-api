@@ -139,7 +139,6 @@ routes.route('/managerLogIn').get((req,res)=>{
 	    	throw err;
 	    	return;
 	    }
-	    console.log(result);
 	    for(var i = 0; i<result.length; i++){
 	    	if(result[i]['ID']==id&&result[i]['password']==hash){
 	    		auth = "true"
@@ -160,7 +159,6 @@ routes.route('/managerGetTasks').get((req,res)=>{
 	    	res.json({status: 'error'});
 	    	throw err;
 	    }
-	    console.log(result);
 	    res.json(result);
 	    db.close();
 	  });
@@ -181,7 +179,6 @@ routes.route('/assignTask').post((req,res)=>{
 		var newvalues = { $set: {managerAssigned: manager, workerAssigned: worker, notes: notes } };
 		dbo.collection("tasks").updateOne(myquery, newvalues, function(err, res) {
 			if (err) throw err;
-			console.log(res);
 			db.close();
 		});
 	});
@@ -200,7 +197,6 @@ routes.route('/employeeGetTasks').get((req,res)=>{
 	    	res.json({status: 'error'});
 	    	throw err;
 	    }
-	    console.log(result);
 	    return res.json(result);
 	    db.close();
 	  });
@@ -212,7 +208,6 @@ routes.route('/getPossibleActivities').get((req,res)=>{
 
 	let rawdata = fs.readFileSync('locationActivityCode.json');
 	let data = JSON.parse(rawdata);
-	console.log(data);
 
 	res.json(data[loc]);
 });
@@ -267,10 +262,6 @@ routes.route('/completeTask').post((req,res)=>{
 function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums){
 	var dbo = db.db("test");
 	var query = {id: worker, date: date};
-	console.log(query);
-    dbo.collection("timecards").find(query).toArray(function(err, result) {
-    	console.log(result);
-    });
     entries.push({
     	jobCode: jobCode,
     	activityCode: activityCode,
@@ -281,11 +272,9 @@ function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rat
     	premiums: premiums,
     	memo: memo
     });
-    console.log(entries);
 	var newvalues = { $set: {entries: entries } };
 	dbo.collection("timecards").updateOne(query, newvalues, function(err, res) {
 	  if (err) throw err;
-	  console.log(res['result']['nModified']);
 	  db.close();
 	});
 }
@@ -299,7 +288,6 @@ routes.route('/validateTimecard').post((req,res)=>{
 		var newvalues = { $set: {validated: "True"} };
 		dbo.collection("timecards").updateOne(myquery, newvalues, function(err, res) {
 			if (err) throw err;
-			console.log(res);
 			db.close();
 		});
 	});
@@ -320,7 +308,6 @@ routes.route('/getPersonInfo').get((req,res)=>{
 		    if(result.length>0){
 		    	result[0]['role']="employee";
 		    	delete result[0]['password'];
-		    	console.log(result);
 		    	db.close();
 		    	return res.json(result[0]);
 		    }
@@ -381,40 +368,38 @@ routes.route('/getCSV').get((req,res)=>{
 			    }
 			    for(var i = 0; i<result.length; i++){
 			    	var timecard = result[i];
-			    	if(timecard['date']==date){
-		    			var employee = ppl[getpersonindex(timecard['id'],ppl)];
-		    			console.log(employee);
-				    	for(var u = 0; u<timecard['entries'].length; u++){
-				    		var entry = timecard['entries'][u];
-				    		var row = {
+	    			var employee = ppl[getpersonindex(timecard['id'],ppl)];
+			    	for(var u = 0; u<timecard['entries'].length; u++){
+			    		var entry = timecard['entries'][u];
+			    		var row = {
+			    			EmployeeName: employee['name'],
+		    				EmployeeID: employee['ID'],
+		    				EmployeeType: employee['employeeType'],
+		    				Date: timecard['date'],
+		    				JobCode: entry['jobCode'],
+		    				ActivityCode: entry['activityCode'],
+		    				Hours: entry['hrs'],
+		    				Timecode: employee['timecode'],
+		    				Memo: entry['memo'] 
+			    		};
+			    		timesheetInfo.push(row);
+			    		for(var prem in entry['premiums']){
+			    			
+			    			row = {
 				    			EmployeeName: employee['name'],
 			    				EmployeeID: employee['ID'],
 			    				EmployeeType: employee['employeeType'],
-			    				Date: date,
+			    				Date: timecard['date'],
 			    				JobCode: entry['jobCode'],
 			    				ActivityCode: entry['activityCode'],
-			    				Hours: entry['hrs'],
-			    				Timecode: employee['timecode'],
+			    				Hours: entry['premiums']['prem'],
+			    				Timecode: premTimecode(employee['timecode'],prem),
 			    				Memo: entry['memo'] 
 				    		};
 				    		timesheetInfo.push(row);
-				    		for(var prem in entry['premiums']){
-				    			
-				    			row = {
-					    			EmployeeName: employee['name'],
-				    				EmployeeID: employee['ID'],
-				    				EmployeeType: employee['employeeType'],
-				    				Date: date,
-				    				JobCode: entry['jobCode'],
-				    				ActivityCode: entry['activityCode'],
-				    				Hours: entry['premiums']['prem'],
-				    				Timecode: premTimecode(employee['timecode'],prem),
-				    				Memo: entry['memo'] 
-					    		};
-					    		timesheetInfo.push(row);
-				    		}
+			    		}
 
-				    	}
+			    	
 
 			    	}
 			    	
@@ -438,7 +423,6 @@ function getpersonindex(employeeid, ppl){
 function premTimecode(employeecode, premtype){
 	let rawdata = fs.readFileSync('premtimecodes.json');
 	let data = JSON.parse(rawdata);
-	console.log(employeecode,premtype,data[premtype][employeecode]);
 	return data[premtype][employeecode];
 }
 
