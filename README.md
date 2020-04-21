@@ -1,5 +1,30 @@
 ## doc on all the endpoints 
 
+### get /workerRegister
+
+input:
+
+1. id: worker id
+2. name
+3. password
+4. timecode
+5. employeeType
+6. workUnit
+7. department
+
+### get /managerRegister
+
+input:
+
+1. id: worker id
+2. name
+3. password
+
+output:
+
+1. auth:"true" - logged in
+2. auth:"false" - failed
+
 ### get /workerlogin
 
 input:

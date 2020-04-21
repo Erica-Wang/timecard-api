@@ -6,10 +6,81 @@ const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 const routes = express.Router();
+/*
+routes.route('/mongofinesse').get((req,res)=>{
+
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var newvalues = { $set: {
+			timecode: "1CUPE1"
+		} };
+		dbo.collection("workerAccounts").updateOne({}, newvalues, function(err, res) {
+			if (err) throw err;
+			console.log(res);
+			db.close();
+		});
+	});
+	res.json();
+
+});*/
 
 routes.route('/').get((req,res)=>{
 	res.send('hello world');
 });
+
+routes.route('/workerRegister').post((req,res)=>{
+	var name = req['query']['name'];
+	var id = req['query']['id'];
+	var pass = req['query']['password'];
+	var timecode = req['query']['timecode'];
+	var employeeType = req['query']['employeeType'];
+	var workUnit = req['query']['workUnit'];
+	var department = req['query']['department'];
+
+	const hash = crypto.createHash('sha256').update(pass).digest('base64');
+
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+	  	if (err) throw err;
+	  	var dbo = db.db("test");
+	  	var myobj = { 
+	  		name: name, 
+	  		ID: id, 
+	  		password: hash,
+	  		timecode: timecode, 
+	  		employeeType: employeeType, 
+	  		workUnit: workUnit, 
+	  		department: department,  
+	  		schedule:[] 
+	  	};
+	  	dbo.collection("workerAccounts").insertOne(myobj, function(err, res) {
+	  		if (err) throw err;
+	  		console.log("1 document inserted");
+  		});
+	});
+})
+
+routes.route('/managerRegister').post((req,res)=>{
+	var name = req['query']['name'];
+	var id = req['query']['id'];
+	var pass = req['query']['password'];
+
+	const hash = crypto.createHash('sha256').update(pass).digest('base64');
+
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+	  	if (err) throw err;
+	  	var dbo = db.db("test");
+	  	var myobj = { 
+	  		name: name, 
+	  		ID: id, 
+	  		password: hash
+	  	};
+	  	dbo.collection("managerAccounts").insertOne(myobj, function(err, res) {
+	  		if (err) throw err;
+	  		console.log("1 document inserted");
+  		});
+	});
+})
 
 //if auth = true, authenticated
 //if auth = false, failed
@@ -142,6 +213,7 @@ routes.route('/completeTask').post((req,res)=>{
 	var hrs = req['query']['hrs'];
 	var overtime = req['query']['overtime'];
 	var timeCode = req['query']['timeCode'];
+	var premiums = req['query']['premiums'];
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
