@@ -226,6 +226,7 @@ routes.route('/completeTask').post((req,res)=>{
 	var timeCode = req['query']['timeCode'];
 	var premiums = req['query']['premiums'];
 	var memo = req['query']['memo'];
+	var equipement = req['query']['equipement'];
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
@@ -241,7 +242,7 @@ routes.route('/completeTask').post((req,res)=>{
 	    var entries;
 	    if(result.length==0){
 	      //doesnt exist, add timecard
-	      var myobj = { id: worker, date: date, validated: "False", entries:[] };
+	      var myobj = { id: worker, date: date, validated: "False", flagged: "False",entries:[] };
 		  dbo.collection("timecards").insertOne(myobj, function(err, res) {
 		    if (err) throw err;
 		    console.log("1 document inserted");
@@ -425,6 +426,17 @@ function premTimecode(employeecode, premtype){
 	let data = JSON.parse(rawdata);
 	return data[premtype][employeecode];
 }
+
+routes.route('/getAllEmployees').get((req,res)=>{
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		dbo.collection("workerAccounts").find({}).toArray(function(err, result) {
+			res.json(result);
+			db.close();
+		});
+	});
+});
 
 module.exports = routes;
 
