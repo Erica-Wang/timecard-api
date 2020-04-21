@@ -251,7 +251,18 @@ routes.route('/getPersonInfo').get((req,res)=>{
 });
 
 routes.route('/getTimecards').get((req,res)=>{
-	
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		dbo.collection("timecards").find({}).toArray(function(err, result) {
+		    if (err){ 
+		    	res.json({"status":"fail"});
+		    	throw err;
+		    	return;
+		    }
+		    return res.json(result);
+		});
+	});
 });
 
 module.exports = routes;

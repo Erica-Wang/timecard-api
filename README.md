@@ -85,3 +85,8 @@ input:
 
 output:
 1. {role(either manager/employee), other fields in the employee/manager mongo object}
+
+### get /getTimecards
+
+output:
+1. [{timecard objects see in mongo}]
