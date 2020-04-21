@@ -46,6 +46,7 @@ routes.route('/').get((req,res)=>{
 });
 
 routes.route('/workerRegister').post((req,res)=>{
+	console.log(req['query']);
 	var name = req['query']['name'];
 	var id = req['query']['id'];
 	var pass = req['query']['password'];
@@ -77,6 +78,7 @@ routes.route('/workerRegister').post((req,res)=>{
 })
 
 routes.route('/managerRegister').post((req,res)=>{
+	console.log(req['query']);
 	var name = req['query']['name'];
 	var id = req['query']['id'];
 	var pass = req['query']['password'];
@@ -101,6 +103,7 @@ routes.route('/managerRegister').post((req,res)=>{
 //if auth = true, authenticated
 //if auth = false, failed
 routes.route('/workerLogIn').get((req,res)=>{
+	console.log(req['query']);
 	var id = req['query']['id'];
 	var pass = req['query']['password'];
 	const hash = crypto.createHash('sha256').update(pass).digest('base64');
@@ -126,6 +129,7 @@ routes.route('/workerLogIn').get((req,res)=>{
 })
 
 routes.route('/managerLogIn').get((req,res)=>{
+	console.log(req['query']);
 	var id = req['query']['id'];
 	var pass = req['query']['password'];
 	const hash = crypto.createHash('sha256').update(pass).digest('base64');
@@ -151,6 +155,7 @@ routes.route('/managerLogIn').get((req,res)=>{
 })
 
 routes.route('/managerGetTasks').get((req,res)=>{
+	console.log(req['query']);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
@@ -167,6 +172,7 @@ routes.route('/managerGetTasks').get((req,res)=>{
 });
 
 routes.route('/assignTask').post((req,res)=>{
+	console.log(req['query']);
 	var notes = req['query']['notes'];
 	var manager = req['query']['managerID'];
 	var worker = req['query']['workerID'];
@@ -186,6 +192,7 @@ routes.route('/assignTask').post((req,res)=>{
 })
 
 routes.route('/employeeGetTasks').get((req,res)=>{
+	console.log(req['query']);
 	var worker = req['query']['workerID'];
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
@@ -204,6 +211,7 @@ routes.route('/employeeGetTasks').get((req,res)=>{
 });
 
 routes.route('/getPossibleActivities').get((req,res)=>{
+	console.log(req['query']);
 	var loc = req['query']['loc'];
 
 	let rawdata = fs.readFileSync('locationActivityCode.json');
@@ -213,6 +221,7 @@ routes.route('/getPossibleActivities').get((req,res)=>{
 });
 
 routes.route('/completeTask').post((req,res)=>{
+	console.log(req['query']);
 	//fill in a new entry
 	var worker = req['query']['id'];
 	var d = new Date();
@@ -281,6 +290,7 @@ function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rat
 }
 
 routes.route('/validateTimecard').post((req,res)=>{
+	console.log(req['query']);
 	var timecard = new ObjectId(req['query']['id']);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
@@ -296,6 +306,7 @@ routes.route('/validateTimecard').post((req,res)=>{
 });
 
 routes.route('/getPersonInfo').get((req,res)=>{
+	console.log(req['query']);
 	var id = req['query']['id'];
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
@@ -330,6 +341,7 @@ routes.route('/getPersonInfo').get((req,res)=>{
 });
 
 routes.route('/getTimecards').get((req,res)=>{
+	console.log(req['query']);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
@@ -345,6 +357,7 @@ routes.route('/getTimecards').get((req,res)=>{
 });
 
 routes.route('/getCSV').get((req,res)=>{
+	console.log(req['query']);
 	var timesheetInfo = [];
 	//employee name, id, type, date, hours, job code, 
 	//activity code, time code, memo
@@ -400,8 +413,6 @@ routes.route('/getCSV').get((req,res)=>{
 				    		timesheetInfo.push(row);
 			    		}
 
-			    	
-
 			    	}
 			    	
 			    }
@@ -428,6 +439,7 @@ function premTimecode(employeecode, premtype){
 }
 
 routes.route('/getAllEmployees').get((req,res)=>{
+	console.log(req['query']);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
