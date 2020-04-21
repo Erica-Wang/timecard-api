@@ -73,9 +73,9 @@ routes.route('/workerRegister').get((req,res)=>{
 	  	dbo.collection("workerAccounts").insertOne(myobj, function(err, res) {
 	  		if (err) throw err;
 	  		console.log("1 document inserted");
+	  		return res.json({auth:"true"})
   		});
 	});
-	return res.json();
 })
 
 routes.route('/managerRegister').get((req,res)=>{
@@ -97,6 +97,7 @@ routes.route('/managerRegister').get((req,res)=>{
 	  	dbo.collection("managerAccounts").insertOne(myobj, function(err, res) {
 	  		if (err) throw err;
 	  		console.log("1 document inserted");
+	  		return res.json({auth:"true"})
   		});
 	});
 	return res.json();
