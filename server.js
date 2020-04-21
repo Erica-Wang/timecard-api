@@ -18,7 +18,8 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 
+console.log(process.env.PORT);
 
-const server = app.listen(5000, function(){
+const server = app.listen(process.env.PORT||5000, function(){
  console.log('Listening on port 5000');
 });
