@@ -103,6 +103,7 @@ routes.route('/assignTask').post((req,res)=>{
 })
 
 routes.route('/employeeGetTasks').get((req,res)=>{
+	console.log(req);
 	var worker = req.body.workerID;
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
