@@ -45,7 +45,7 @@ routes.route('/').get((req,res)=>{
 	res.send('hello world');
 });
 
-routes.route('/workerRegister').post((req,res)=>{
+routes.route('/workerRegister').get((req,res)=>{
 	console.log(req['query']);
 	var name = req['query']['name'];
 	var id = req['query']['id'];
@@ -78,7 +78,7 @@ routes.route('/workerRegister').post((req,res)=>{
 	return res.json();
 })
 
-routes.route('/managerRegister').post((req,res)=>{
+routes.route('/managerRegister').get((req,res)=>{
 	console.log(req['query']);
 	var name = req['query']['name'];
 	var id = req['query']['id'];
@@ -219,10 +219,10 @@ routes.route('/getPossibleActivities').get((req,res)=>{
 	let rawdata = fs.readFileSync('locationActivityCode.json');
 	let data = JSON.parse(rawdata);
 
-	res.json(data[loc]);
+	return res.json(data[loc]);
 });
 
-routes.route('/completeTask').post((req,res)=>{
+routes.route('/completeTask').get((req,res)=>{
 	console.log(req['query']);
 	//fill in a new entry
 	var worker = req['query']['id'];
@@ -291,7 +291,7 @@ function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rat
 	});
 }
 
-routes.route('/validateTimecard').post((req,res)=>{
+routes.route('/validateTimecard').get((req,res)=>{
 	console.log(req['query']);
 	var timecard = new ObjectId(req['query']['id']);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
@@ -304,7 +304,7 @@ routes.route('/validateTimecard').post((req,res)=>{
 			db.close();
 		});
 	});
-	res.json();
+	return res.json();
 });
 
 routes.route('/getPersonInfo').get((req,res)=>{
