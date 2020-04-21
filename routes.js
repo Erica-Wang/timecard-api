@@ -75,6 +75,7 @@ routes.route('/workerRegister').post((req,res)=>{
 	  		console.log("1 document inserted");
   		});
 	});
+	return res.json();
 })
 
 routes.route('/managerRegister').post((req,res)=>{
@@ -98,6 +99,7 @@ routes.route('/managerRegister').post((req,res)=>{
 	  		console.log("1 document inserted");
   		});
 	});
+	return res.json();
 })
 
 //if auth = true, authenticated
@@ -417,7 +419,7 @@ routes.route('/getCSV').get((req,res)=>{
 			    	
 			    }
 
-				res.json(timesheetInfo);
+				return res.json(timesheetInfo);
 
 		    });
 		});
