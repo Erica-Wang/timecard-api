@@ -13,26 +13,13 @@ routes.route('/mongofinesse').get((req,res)=>{
 		if (err) throw err;
 		var dbo = db.db("test");
 		var obj = { 
-			id: "STE001",
-			date: "2020 4 21",
-			entries:[{
-				jobCode: "710560",
-				activityCode: "71125",
-				rate: 3,
-				hrs: 4,
-				premiums:{}
-			},
-			{
-				jobCode: "710560",
-				activityCode: "71125",
-				rate: 4,
-				hrs: 2,
-				premiums:{
-					"SHIFT PREMIUM": 3
-				}
-			}]
+			jobCode: "710560",
+			activityCode: "71125",
+			managerAssvined: "RAH001",
+			workerAssigned: "BOB002",
+			notes: "yea"
 		};
-		dbo.collection("timecards").insertOne(obj, function(err, res) {
+		dbo.collection("tasks").insertOne(obj, function(err, res) {
 	  		if (err) throw err;
 	  		console.log("1 document inserted");
   		});
@@ -370,6 +357,10 @@ routes.route('/getCSV').get((req,res)=>{
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
+
+		dbo.collection("workerAccounts").find({}).toArray(function(err, ppl) {
+			console.log(ppl);
+		});
 		dbo.collection("timecards").find({}).toArray(function(err, result) {
 		    if (err){ 
 		    	res.json({"status":"fail"});
@@ -382,6 +373,7 @@ routes.route('/getCSV').get((req,res)=>{
 			    	throw err;
 			    	return;
 			    }
+			    console.log(ppl);
 			    for(var i = 0; i<result.length; i++){
 			    	var timecard = result[i];
 	    			var employee = ppl[getpersonindex(timecard['id'],ppl)];
