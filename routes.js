@@ -204,6 +204,7 @@ routes.route('/assignTaskAll').get((req,res)=>{
 	var notes = req['query']['notes'];
 	var manager = req['query']['managerID'];
 	var workers = req['query']['employees'];
+	console.log(workers);
 	/*var workers = [
 		{label: "name", value:"codd1"},
 		{label: "name", value:"codd2"},
@@ -218,6 +219,8 @@ routes.route('/assignTaskAll').get((req,res)=>{
 		dbo.collection("tasks").find(myquery).toArray(function(err, result) {
 			if (err) throw err;
 			for (var i = 1; i<workers.length; i++){
+				console.log(workers[i]);
+				console.log(workers[i]['value']);
 				var myobj = result[0];
 				myobj['managerAssigned']=manager;
 				myobj['notes']=notes;
