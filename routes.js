@@ -222,9 +222,9 @@ routes.route('/completeTask').get((req,res)=>{
 	var hrs = req['query']['hrs'];
 	var overtime = req['query']['overtime'];
 	var timeCode = req['query']['timeCode'];
-	var premiums = req['query']['premiums'];
+	var premiums = JSON.parse(req['query']['premiums']);
 	var memo = req['query']['memo'];
-	var equipement = req['query']['equipement'];
+	var equipment = req['query']['equipment'];
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
