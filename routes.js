@@ -390,7 +390,6 @@ routes.route('/getCSV').get((req,res)=>{
 			    		};
 			    		timesheetInfo.push(row);
 			    		for(var prem in entry['premiums']){
-			    			
 			    			row = {
 				    			EmployeeName: employee['name'],
 			    				EmployeeID: employee['ID'],
@@ -398,7 +397,7 @@ routes.route('/getCSV').get((req,res)=>{
 			    				Date: timecard['date'],
 			    				JobCode: entry['jobCode'],
 			    				ActivityCode: entry['activityCode'],
-			    				Hours: entry['premiums']['prem'],
+			    				Hours: entry['premiums'][prem],
 			    				Timecode: premTimecode(employee['timecode'],prem),
 			    				Memo: entry['memo'] 
 				    		};
