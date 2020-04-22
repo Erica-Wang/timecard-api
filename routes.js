@@ -201,16 +201,21 @@ routes.route('/assignTask').get((req,res)=>{
 
 routes.route('/assignTaskAll').get((req,res)=>{
 	console.log(req['query']);
+	
 	var notes = req['query']['notes'];
 	var manager = req['query']['managerID'];
 	var workers = req['query']['employees'];
-	console.log(workers);
-	/*var workers = [
+	var taskID = new ObjectId(req['query']['id']);
+	
+	/*var taskID = new ObjectId("5e9fd90ea31e357724b78d3e");
+	var manager = "ANN001";
+	var workers = ['{"label":"Steve Doe","value":"STE001"}','{"label":"Bob Doe","value":"BOB002"}'];
+	var notes = "notes";
+	var workers = [
 		{label: "name", value:"codd1"},
 		{label: "name", value:"codd2"},
 		{label: "name", value:"codd3"}
 	]*/
-	var taskID = new ObjectId(req['query']['id']);
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
@@ -219,13 +224,13 @@ routes.route('/assignTaskAll').get((req,res)=>{
 		dbo.collection("tasks").find(myquery).toArray(function(err, result) {
 			if (err) throw err;
 			for (var i = 1; i<workers.length; i++){
-				console.log(workers[i]);
-				console.log(workers[i]['value']);
+				var emp = JSON.parse(workers[i]);
 				var myobj = result[0];
 				myobj['managerAssigned']=manager;
 				myobj['notes']=notes;
-				myobj['workerAssigned']=workers[i]['value'];
+				myobj['workerAssigned']=emp['value'];
 				delete myobj['_id'];
+				console.log(myobj)
 				dbo.collection("tasks").insertOne(myobj, function(err, res) {
 					if (err) throw err;
 					console.log("1 doc inserted");
@@ -233,8 +238,8 @@ routes.route('/assignTaskAll').get((req,res)=>{
 			}
 		});
 
-
-		var newvalues = { $set: {managerAssigned: manager, workerAssigned: workers[0]['value'], notes: notes } };
+		var emp = JSON.parse(workers[0]);
+		var newvalues = { $set: {managerAssigned: manager, workerAssigned: emp['value'], notes: notes } };
 		dbo.collection("tasks").updateOne(myquery, newvalues, function(err, res) {
 			if (err) throw err;
 			console.log("1 doc updated");
