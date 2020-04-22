@@ -12,17 +12,16 @@ routes.route('/mongofinesse').get((req,res)=>{
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
-		var obj = { 
-			jobCode: "710560",
-			activityCode: "71125",
-			managerAssvined: "RAH001",
-			workerAssigned: "BOB002",
-			notes: "yea"
-		};
-		dbo.collection("tasks").insertOne(obj, function(err, res) {
-	  		if (err) throw err;
-	  		console.log("1 document inserted");
-  		});
+		dbo.collection("timecards").find({}).toArray(function(err, result) {
+			var tm = result[1];
+			tm['id']="ALC420";
+			delete tm['_id'];
+			dbo.collection("timecards").insertOne(tm, function(err, res) {
+	  			if (err) throw err;
+		  		console.log("1 document inserted");
+	  		});
+		});
+		
 	});
 	res.json();
 
@@ -174,6 +173,68 @@ routes.route('/assignTask').get((req,res)=>{
 		var newvalues = { $set: {managerAssigned: manager, workerAssigned: worker, notes: notes } };
 		dbo.collection("tasks").updateOne(myquery, newvalues, function(err, res) {
 			if (err) throw err;
+			db.close();
+		});
+	});
+	res.json();
+})
+
+routes.route('/assignTask').get((req,res)=>{
+	console.log(req['query']);
+	var notes = req['query']['notes'];
+	var manager = req['query']['managerID'];
+	var worker = req['query']['workerID'];
+	var taskID = new ObjectId(req['query']['id']);
+
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var myquery = {_id:taskID};
+		var newvalues = { $set: {managerAssigned: manager, workerAssigned: worker, notes: notes } };
+		dbo.collection("tasks").updateOne(myquery, newvalues, function(err, res) {
+			if (err) throw err;
+			db.close();
+		});
+	});
+	res.json();
+})
+
+routes.route('/assignTaskAll').get((req,res)=>{
+	console.log(req['query']);
+	var notes = req['query']['notes'];
+	var manager = req['query']['managerID'];
+	//var workers = req['query']['employees'];
+	var workers = [
+		{label: "name", value:"codd1"},
+		{label: "name", value:"codd2"},
+		{label: "name", value:"codd3"}
+	]
+	var taskID = new ObjectId(req['query']['id']);
+
+	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var myquery = {_id:taskID};
+		dbo.collection("tasks").find(myquery).toArray(function(err, result) {
+			if (err) throw err;
+			for (var i = 1; i<workers.length; i++){
+				var myobj = result[0];
+				myobj['managerAssigned']=manager;
+				myobj['notes']=notes;
+				myobj['workerAssigned']=workers[i]['value'];
+				delete myobj['_id'];
+				dbo.collection("tasks").insertOne(myobj, function(err, res) {
+					if (err) throw err;
+					console.log("1 doc inserted");
+				});
+			}
+		});
+
+
+		var newvalues = { $set: {managerAssigned: manager, workerAssigned: workers[0]['value'], notes: notes } };
+		dbo.collection("tasks").updateOne(myquery, newvalues, function(err, res) {
+			if (err) throw err;
+			console.log("1 doc updated");
 			db.close();
 		});
 	});

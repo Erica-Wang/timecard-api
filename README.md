@@ -66,14 +66,23 @@ output:
 
 1. {_id, jobCode, activityCode, managerAssigned, workerAssigned, notes}
 
-### post /assignTask (there can only be one manager oop)
+### get /assignTask (there can only be one manager oop)
 
 input:
 
 1. workerID
 2. managerID
 3. notes
-4. taskID
+4. id (taskid)
+
+### get /assignTask (there can only be one manager oop)
+
+input:
+
+1. employees (list of objects{value=workerid})
+2. managerID
+3. notes
+4. id (taskid)
 
 ### get /employeeGetTasks
 
@@ -95,7 +104,7 @@ output:
 
 1. [{see json file}]
 
-### post /completeTask
+### get /completeTask
 
 input:
 
@@ -104,12 +113,11 @@ input:
 3. activityCode
 4. rate
 5. hrs
-6. overtime
-7. timeCode
-8: premiums: give a json file, key = premium name, value = empty for "MEAL ALLOWENCE", # of hrs for rest (SEE FULL LIST IN FRONT OF FILE)
+6: premiums: give a json file, key = premium name, value = empty for "MEAL ALLOWENCE", # of hrs for rest (SEE FULL LIST IN FRONT OF FILE)
+7. memo
+8. equipment
 
-
-### post /validateTimecard
+### get /validateTimecard
 
 input:
 
@@ -128,3 +136,17 @@ output:
 
 output:
 1. [{timecard objects see in mongo}]
+
+### get /getCSV
+
+prints out all rows of the generated csv file as an array of json files
+
+output:
+1. [{EmployeeName, EmployeeID, EmployeeType, Date, JobCode, ActivityCode, Hours, Timecode, Memo}]
+
+### get /getAllEmployees
+
+output:
+1. [{employee object see mongo}]
+
+
