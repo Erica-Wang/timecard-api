@@ -216,16 +216,15 @@ routes.route('/completeTask').get((req,res)=>{
 	var d = new Date();
 	var date = d.getFullYear()+" "+(d.getMonth()+1)+" "+d.getDate();
 
-	var jobCode = req['query']['jobCode'];
-	var activityCode = req['query']['activityCode'];
+	var jobCode = req['query']['jobCode'].substring(0,6);
+	var activityCode = req['query']['activityCode'].substring(0,5);
 	var rate = req['query']['rate'];
 	var hrs = req['query']['hrs'];
-	var overtime = req['query']['overtime'];
-	var timeCode = req['query']['timeCode'];
 	var premiums = JSON.parse(req['query']['premiums']);
 	var memo = req['query']['memo'];
 	var equipment = req['query']['equipment'];
 
+	console.log(jobCode,activityCode);
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
 	  if (err) throw err;
 	  var dbo = db.db("test");
@@ -246,19 +245,19 @@ routes.route('/completeTask').get((req,res)=>{
 		    console.log("1 document inserted");
 	  	  	entries = [];
 	  	  	//insert entry
-		    insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums);
+		    insertEntry(equipment, memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, premiums);
 	  	  });
 	    }else{
 	    	//exists, just insert entry
 	    	entries = result[0]['entries'];
-	    	insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums);
+	    	insertEntry(equipment, memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, premiums);
 	    	db.close();
 	    }
 	  });
 	});
 });
 
-function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, overtime, timeCode, premiums){
+function insertEntry(equipment, memo, worker, date, db, entries, jobCode, activityCode, rate, hrs, premiums){
 	var dbo = db.db("test");
 	var query = {id: worker, date: date};
     entries.push({
@@ -266,10 +265,9 @@ function insertEntry(memo, worker, date, db, entries, jobCode, activityCode, rat
     	activityCode: activityCode,
     	rate: rate,
     	hrs: hrs,
-    	overtime: overtime,
-    	timeCode: timeCode,
     	premiums: premiums,
-    	memo: memo
+    	memo: memo,
+    	equipment: equipment
     });
 	var newvalues = { $set: {entries: entries } };
 	dbo.collection("timecards").updateOne(query, newvalues, function(err, res) {
@@ -427,6 +425,7 @@ function getpersonindex(employeeid, ppl){
 }
 
 function premTimecode(employeecode, premtype){
+	console.log(employeecode,premtype);
 	let rawdata = fs.readFileSync('premtimecodes.json');
 	let data = JSON.parse(rawdata);
 	return data[premtype][employeecode];
