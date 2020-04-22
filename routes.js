@@ -203,12 +203,12 @@ routes.route('/assignTaskAll').get((req,res)=>{
 	console.log(req['query']);
 	var notes = req['query']['notes'];
 	var manager = req['query']['managerID'];
-	//var workers = req['query']['employees'];
-	var workers = [
+	var workers = req['query']['employees'];
+	/*var workers = [
 		{label: "name", value:"codd1"},
 		{label: "name", value:"codd2"},
 		{label: "name", value:"codd3"}
-	]
+	]*/
 	var taskID = new ObjectId(req['query']['id']);
 
 	MongoClient.connect(process.env.MONGO_URL, function(err, db) {
